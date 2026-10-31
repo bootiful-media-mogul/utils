@@ -3,6 +3,7 @@ package com.joshlong.mogul.utils;
 import org.slf4j.LoggerFactory;
 import org.springframework.core.ResolvableType;
 import org.springframework.util.Assert;
+import org.springframework.util.ClassUtils;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -13,7 +14,12 @@ public abstract class ReflectionUtils {
 		var log = LoggerFactory.getLogger(ReflectionUtils.class);
 		try {
 			Assert.hasText(name, "you must provide a non-empty class name");
-			return Class.forName(name);
+			// the context classloader, not this class's own: under spring boot devtools
+			// the application's classes live in a restart classloader and this library
+			// doesn't, so Class.forName(name) from here loads a second copy of, say,
+			// Segment that equals nothing the application has -- and every lookup keyed
+			// on it fails. ClassUtils falls back sensibly when there's no context loader.
+			return ClassUtils.forName(name, ClassUtils.getDefaultClassLoader());
 		}
 		catch (ClassNotFoundException e) {
 			log.warn("classNotFoundException when trying to do Class.forName({}) to resolve the class for a {} ", name,
