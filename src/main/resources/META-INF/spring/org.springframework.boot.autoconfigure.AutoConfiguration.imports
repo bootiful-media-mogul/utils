@@ -1,1 +1,2 @@
 com.joshlong.mogul.utils.UtilsAutoConfiguration
+com.joshlong.mogul.utils.aot.AotAutoConfiguration
