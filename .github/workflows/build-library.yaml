@@ -5,6 +5,7 @@ env:
   GH_USER: ${{ github.actor }}
 
 on:
+  workflow_dispatch:
   push:
     branches: [ main ]
 
